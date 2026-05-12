@@ -1,0 +1,11 @@
+# macOS metadata
+.DS_Store
+
+# Editor cruft
+*~
+*.swp
+.idea/
+.vscode/
+
+# Build / packaging
+*.zip
