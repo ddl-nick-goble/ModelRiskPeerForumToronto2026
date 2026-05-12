@@ -1,19 +1,20 @@
 # Demo videos
 
-Drop your nine demo recordings here with these exact filenames so the
+Drop your ten demo recordings here with these exact filenames so the
 deck picks them up automatically:
 
-| Slide | File              | Demo                                     |
-|-------|-------------------|------------------------------------------|
-|  17   | `demo-01.mp4`     | Onboarding a new use case                |
-|  19   | `demo-02.mp4`     | Every model, in one place                |
-|  21   | `demo-03.mp4`     | Starting governance on a new model       |
-|  23   | `demo-04.mp4`     | Governed agents inside Excel             |
-|  25   | `demo-05.mp4`     | Excel itself, as a governed model        |
-|  27   | `demo-06.mp4`     | Customizing a policy                     |
-|  29   | `demo-07.mp4`     | Compliance status, at a glance           |
-|  31   | `demo-08.mp4`     | Generating documentation, automatically  |
-|  33   | `demo-09.mp4`     | Keeping the human in the loop            |
+| Slide | File              | Demo                                          |
+|-------|-------------------|-----------------------------------------------|
+|  17   | `demo-01.mp4`     | Onboarding a new use case                     |
+|  19   | `demo-02.mp4`     | Every model, in one place                     |
+|  21   | `demo-03.mp4`     | Starting governance on a new model            |
+|  23   | `demo-04.mp4`     | Governed agents inside Excel                  |
+|  25   | `demo-05.mp4`     | Excel itself, as a governed model (Part 1)    |
+|  27   | `demo-06.mp4`     | Excel itself, as a governed model (Part 2)    |
+|  29   | `demo-07.mp4`     | Customizing a policy                          |
+|  31   | `demo-08.mp4`     | Compliance status, at a glance                |
+|  33   | `demo-09.mp4`     | Generating documentation, automatically       |
+|  35   | `demo-10.mp4`     | Keeping the human in the loop                 |
 
 ## Required encoding
 
@@ -29,7 +30,7 @@ deck picks them up automatically:
 ## Size budget
 
 GitHub Pages caps each file at **100 MB** and each repo at **1 GB**.
-For 19 minutes total across 9 clips, target around **60–75 MB per file**
+For 19 minutes total across 10 clips, target around **60–75 MB per file**
 (roughly 5 Mbps at 1080p), which leaves comfortable headroom.
 
 If a clip won't fit, re-encode it with HandBrake's "Web Optimized" toggle
