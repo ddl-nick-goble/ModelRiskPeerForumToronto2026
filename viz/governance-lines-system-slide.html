@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Three Lines of Defense — on the Modeling System of Record</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body { background: #0A0B0D; overflow: hidden; }
+  .stage { position: fixed; inset: 0; background: #0A0B0D; overflow: hidden; }
+  .canvas {
+    position: absolute; top: 50%; left: 50%;
+    width: 1920px; height: 1080px;
+    margin-left: -960px; margin-top: -540px;
+    transform-origin: center center;
+  }
+  .canvas svg { display: block; width: 1920px; height: 1080px; }
+
+  .serif { font-family: "Playfair Display", Georgia, "Times New Roman", serif; }
+  .mono  { font-family: "JetBrains Mono", "SF Mono", Menlo, monospace; }
+  .sans  { font-family: "Source Sans 3", Helvetica, Arial, sans-serif; }
+
+  @keyframes flowdash { to { stroke-dashoffset: -44; } }
+  .flow { stroke-dasharray: 2.5 9; stroke-linecap: round; animation: flowdash 1.4s linear infinite; }
+
+</style>
+</head>
+<body>
+<div class="stage">
+<div class="canvas" id="canvas">
+
+  <svg viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg" role="img"
+       font-family="'Source Sans 3', Helvetica, Arial, sans-serif">
+    <title>Three lines of defense, all running on the Domino modeling system of record</title>
+    <desc>The four-box peer mesh and the Board / FSRA oversight, unchanged. Below, a wide Domino "modeling system of record" bar; each of the four cards connects to it with a single double-headed line that runs from the card's colour into white.</desc>
+
+    <defs>
+      <!-- peer-mesh gradients (top arcs) -->
+      <linearGradient id="gMD" gradientUnits="userSpaceOnUse" x1="355"  y1="0" x2="605"  y2="0"><stop offset="0" stop-color="#EC4899"/><stop offset="1" stop-color="#2DE2A0"/></linearGradient>
+      <linearGradient id="gDR" gradientUnits="userSpaceOnUse" x1="835"  y1="0" x2="1085" y2="0"><stop offset="0" stop-color="#2DE2A0"/><stop offset="1" stop-color="#4DD0E1"/></linearGradient>
+      <linearGradient id="gRA" gradientUnits="userSpaceOnUse" x1="1315" y1="0" x2="1565" y2="0"><stop offset="0" stop-color="#4DD0E1"/><stop offset="1" stop-color="#F4D03F"/></linearGradient>
+      <linearGradient id="gMRr" gradientUnits="userSpaceOnUse" x1="1200" y1="0" x2="240"  y2="0"><stop offset="0" stop-color="#4DD0E1"/><stop offset="1" stop-color="#EC4899"/></linearGradient>
+      <linearGradient id="gDAr" gradientUnits="userSpaceOnUse" x1="1680" y1="0" x2="720"  y2="0"><stop offset="0" stop-color="#F4D03F"/><stop offset="1" stop-color="#2DE2A0"/></linearGradient>
+      <linearGradient id="gMAr" gradientUnits="userSpaceOnUse" x1="1795" y1="0" x2="125"  y2="0"><stop offset="0" stop-color="#F4D03F"/><stop offset="1" stop-color="#EC4899"/></linearGradient>
+
+      <!-- system-of-record gradients (vertical): card colour → white -->
+      <linearGradient id="gSysM" gradientUnits="userSpaceOnUse" x1="0" y1="712" x2="0" y2="843"><stop offset="0" stop-color="#EC4899"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+      <linearGradient id="gSysD" gradientUnits="userSpaceOnUse" x1="0" y1="712" x2="0" y2="843"><stop offset="0" stop-color="#2DE2A0"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+      <linearGradient id="gSysR" gradientUnits="userSpaceOnUse" x1="0" y1="712" x2="0" y2="843"><stop offset="0" stop-color="#4DD0E1"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+      <linearGradient id="gSysA" gradientUnits="userSpaceOnUse" x1="0" y1="712" x2="0" y2="843"><stop offset="0" stop-color="#F4D03F"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+
+      <marker id="aPink"   viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#EC4899"/></marker>
+      <marker id="aMint"   viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#2DE2A0"/></marker>
+      <marker id="aCyan"   viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4DD0E1"/></marker>
+      <marker id="aYellow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#F4D03F"/></marker>
+      <marker id="aGov"    viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#6B7585"/></marker>
+
+      <!-- white head (lands on the system bar) -->
+      <marker id="aWhite"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#FFFFFF"/></marker>
+      <!-- coloured heads pointing back up into each card (start of the line) -->
+      <marker id="aMSpink"   viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#EC4899"/></marker>
+      <marker id="aMSmint"   viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#2DE2A0"/></marker>
+      <marker id="aMScyan"   viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#4DD0E1"/></marker>
+      <marker id="aMSyellow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#F4D03F"/></marker>
+    </defs>
+
+    <rect x="0" y="0" width="1920" height="1080" fill="#0A0B0D"/>
+
+    <!-- =================== ANCILLARY OVERSIGHT =================== -->
+    <g fill="none" stroke="#5A6472" stroke-width="1.8" opacity="0.9" class="flow">
+      <path d="M1170,350 C1170,270 1250,210 1262,158" marker-end="url(#aGov)"/>
+      <path d="M1620,350 C1620,270 1418,205 1402,158" marker-end="url(#aGov)"/>
+      <path d="M1230,350 C1230,270 1540,220 1620,162" marker-end="url(#aGov)"/>
+      <path d="M1722,350 C1722,270 1732,210 1734,158" marker-end="url(#aGov)"/>
+      <path d="M1510,112 L1556,112" marker-end="url(#aGov)"/>
+    </g>
+
+    <!-- =================== SYSTEM-OF-RECORD LINKS =================================
+         Each card ↔ bar is a closely-spaced PAIR of bézier curves running in
+         opposite directions: one card→system (white head into the bar) and one
+         system→card (coloured head back into the card). Both leave/enter
+         perpendicular (vertical tangents) and carry the colour→white gradient. -->
+    <g fill="none" stroke-width="2.2" class="flow">
+      <!-- model (pink), offset 1.8 -->
+      <path d="M238.2,712 C238.2,778 538.2,778 538.2,843" stroke="url(#gSysM)" marker-end="url(#aWhite)"/>
+      <path d="M541.8,843 C541.8,778 241.8,778 241.8,712" stroke="url(#gSysM)" marker-end="url(#aPink)"/>
+      <!-- desk (mint) -->
+      <path d="M718.2,712 C718.2,778 818.2,778 818.2,843" stroke="url(#gSysD)" marker-end="url(#aWhite)"/>
+      <path d="M821.8,843 C821.8,778 721.8,778 721.8,712" stroke="url(#gSysD)" marker-end="url(#aMint)"/>
+      <!-- risk (cyan) -->
+      <path d="M1198.2,712 C1198.2,778 1098.2,778 1098.2,843" stroke="url(#gSysR)" marker-end="url(#aWhite)"/>
+      <path d="M1101.8,843 C1101.8,778 1201.8,778 1201.8,712" stroke="url(#gSysR)" marker-end="url(#aCyan)"/>
+      <!-- audit (yellow) -->
+      <path d="M1678.2,712 C1678.2,778 1378.2,778 1378.2,843" stroke="url(#gSysA)" marker-end="url(#aWhite)"/>
+      <path d="M1381.8,843 C1381.8,778 1681.8,778 1681.8,712" stroke="url(#gSysA)" marker-end="url(#aYellow)"/>
+    </g>
+
+    <!-- ===== CARD 1 — The model (pink) ===== -->
+    <g transform="translate(40,350)">
+      <rect width="400" height="360" fill="#14171C" stroke="#242932"/>
+      <rect width="400" height="6" fill="#EC4899"/>
+      <text x="26" y="52" class="sans" fill="#EC4899" font-size="20" font-weight="700" letter-spacing="2.6">THE SYSTEM</text>
+      <text x="26" y="126" class="serif" fill="#FFFFFF" font-size="48" font-weight="700">The model</text>
+      <text x="26" y="166" class="mono" fill="#D5D9E1" font-size="17">M : X &#8594; Y &#160;&#160;<tspan fill="#EC4899" font-weight="600">v = tracked</tspan></text>
+      <line x1="26" y1="188" x2="374" y2="188" stroke="#242932"/>
+      <g class="mono" font-size="15">
+        <text x="26" y="226" fill="#8A93A0" letter-spacing="1.4">OBJECT</text><text x="150" y="226" fill="#D5D9E1">versioned operator</text>
+        <text x="26" y="268" fill="#8A93A0" letter-spacing="1.4">LINEAGE</text><text x="150" y="268" fill="#D5D9E1">inputs · code · &#937; pinned</text>
+        <text x="26" y="310" fill="#8A93A0" letter-spacing="1.4">STATE</text><text x="150" y="310" fill="#D5D9E1">champion + challengers</text>
+      </g>
+      <line x1="26" y1="328" x2="374" y2="328" stroke="#242932" stroke-dasharray="3 3"/>
+      <text x="26" y="352" class="mono" fill="#8A93A0" font-size="14">OWNED BY <tspan fill="#EC4899" font-weight="600">model developer</tspan></text>
+    </g>
+
+    <!-- ===== CARD 2 — The desk (mint) ===== -->
+    <g transform="translate(520,350)">
+      <rect width="400" height="360" fill="#14171C" stroke="#242932"/>
+      <rect width="400" height="6" fill="#2DE2A0"/>
+      <text x="26" y="52" class="sans" fill="#2DE2A0" font-size="20" font-weight="700" letter-spacing="2.6">1ST LINE OF DEFENSE</text>
+      <text x="26" y="126" class="serif" fill="#FFFFFF" font-size="48" font-weight="700">The desk</text>
+      <text x="26" y="166" class="mono" fill="#D5D9E1" font-size="17">owns(M) &#8743; operates(M)</text>
+      <line x1="26" y1="188" x2="374" y2="188" stroke="#242932"/>
+      <g class="mono" font-size="15">
+        <text x="26" y="226" fill="#8A93A0" letter-spacing="1.4">MANDATE</text><text x="150" y="226" fill="#D5D9E1">owns the risk it takes</text>
+        <text x="26" y="268" fill="#8A93A0" letter-spacing="1.4">CONTROLS</text><text x="150" y="268" fill="#D5D9E1">limits · checks</text>
+        <text x="26" y="310" fill="#8A93A0" letter-spacing="1.4">CADENCE</text><text x="150" y="310" fill="#D5D9E1">every trade · real-time</text>
+      </g>
+      <line x1="26" y1="328" x2="374" y2="328" stroke="#242932" stroke-dasharray="3 3"/>
+      <text x="26" y="352" class="mono" fill="#8A93A0" font-size="14">REPORTS TO <tspan fill="#2DE2A0" font-weight="600">business head</tspan></text>
+    </g>
+
+    <!-- ===== CARD 3 — Risk & validation (cyan) ===== -->
+    <g transform="translate(1000,350)">
+      <rect width="400" height="360" fill="#14171C" stroke="#242932"/>
+      <rect width="400" height="6" fill="#4DD0E1"/>
+      <text x="26" y="52" class="sans" fill="#4DD0E1" font-size="20" font-weight="700" letter-spacing="2.6">2ND LINE OF DEFENSE</text>
+      <text x="26" y="124" class="serif" fill="#FFFFFF" font-size="42" font-weight="700">Risk &amp; validation</text>
+      <text x="26" y="166" class="mono" fill="#D5D9E1" font-size="17">validate(M) &#8866; approve | veto</text>
+      <line x1="26" y1="188" x2="374" y2="188" stroke="#242932"/>
+      <g class="mono" font-size="15">
+        <text x="26" y="226" fill="#8A93A0" letter-spacing="1.4">MANDATE</text><text x="150" y="226" fill="#D5D9E1">independent challenge</text>
+        <text x="26" y="268" fill="#8A93A0" letter-spacing="1.4">POWERS</text><text x="150" y="268" fill="#D5D9E1">sets policy &amp; limits</text>
+        <text x="26" y="310" fill="#8A93A0" letter-spacing="1.4">VALIDATE</text><text x="150" y="310" fill="#D5D9E1">pre-go-live &amp; ongoing</text>
+      </g>
+      <line x1="26" y1="328" x2="374" y2="328" stroke="#242932" stroke-dasharray="3 3"/>
+      <text x="26" y="352" class="mono" fill="#8A93A0" font-size="14">REPORTS TO <tspan fill="#4DD0E1" font-weight="600">chief risk officer</tspan></text>
+    </g>
+
+    <!-- ===== CARD 4 — Internal audit (yellow) ===== -->
+    <g transform="translate(1480,350)">
+      <rect width="400" height="360" fill="#14171C" stroke="#242932"/>
+      <rect width="400" height="6" fill="#F4D03F"/>
+      <text x="26" y="52" class="sans" fill="#F4D03F" font-size="20" font-weight="700" letter-spacing="2.6">3RD LINE OF DEFENSE</text>
+      <text x="26" y="126" class="serif" fill="#FFFFFF" font-size="48" font-weight="700">Internal audit</text>
+      <text x="26" y="166" class="mono" fill="#D5D9E1" font-size="17">assure(L1 &#8743; L2) &#8594; board</text>
+      <line x1="26" y1="188" x2="374" y2="188" stroke="#242932"/>
+      <g class="mono" font-size="15">
+        <text x="26" y="226" fill="#8A93A0" letter-spacing="1.4">MANDATE</text><text x="150" y="226" fill="#D5D9E1">independent assurance</text>
+        <text x="26" y="268" fill="#8A93A0" letter-spacing="1.4">SCOPE</text><text x="150" y="268" fill="#D5D9E1">tests 1st &amp; 2nd line</text>
+        <text x="26" y="310" fill="#8A93A0" letter-spacing="1.4">EVIDENCE</text><text x="150" y="310" fill="#D5D9E1">samples · reperforms</text>
+      </g>
+      <line x1="26" y1="328" x2="374" y2="328" stroke="#242932" stroke-dasharray="3 3"/>
+      <text x="26" y="352" class="mono" fill="#8A93A0" font-size="14">REPORTS TO <tspan fill="#F4D03F" font-weight="600">audit committee</tspan></text>
+    </g>
+
+    <!-- ===== ANCILLARY NODE — Board ===== -->
+    <g transform="translate(1130,70)">
+      <rect width="380" height="84" fill="#111419" stroke="#3A4150" stroke-width="1.2"/>
+      <rect width="380" height="5" fill="#6B7585"/>
+      <text x="22" y="34" class="sans" fill="#8A93A0" font-size="14" font-weight="700" letter-spacing="2.4">GOVERNING BODY</text>
+      <text x="22" y="68" class="serif" fill="#FFFFFF" font-size="28" font-weight="700">Board &middot; Audit Committee</text>
+    </g>
+
+    <!-- ===== ANCILLARY NODE — External regulator (OMERS → FSRA) ===== -->
+    <g transform="translate(1556,70)">
+      <rect width="324" height="84" fill="#111419" stroke="#3A4150" stroke-width="1.2"/>
+      <rect width="324" height="5" fill="#6B7585"/>
+      <text x="22" y="34" class="sans" fill="#8A93A0" font-size="14" font-weight="700" letter-spacing="2.4">EXTERNAL &middot; ONTARIO</text>
+      <text x="22" y="68" class="serif" fill="#FFFFFF" font-size="28" font-weight="700">FSRA <tspan class="mono" fill="#8A93A0" font-size="14">pension regulator</tspan></text>
+    </g>
+
+    <!-- ===== SYSTEM OF RECORD — bottom bar (3/4 width, raised) ===== -->
+    <g transform="translate(270,845)">
+      <rect width="1380" height="162" fill="#111722" stroke="#3A4150" stroke-width="1.2"/>
+      <rect width="1380" height="6" fill="#FFFFFF"/>
+      <!-- Domino wordmark (tile glyph + name) -->
+      <text x="1344" y="47" text-anchor="end" class="serif" fill="#FFFFFF" font-size="27" font-weight="700">Domino</text>
+      <text x="36" y="76" class="serif" fill="#FFFFFF" font-size="44" font-weight="700">Modeling platform &middot; system of record</text>
+      <text x="36" y="116" class="mono" fill="#D5D9E1" font-size="15">one house for a model&#8217;s entire context and governance, from ideation &#8594; development &#8594; validation &#8594; deployment &#8594; usage &#8594; monitoring &#8594; retirement</text>
+      <text x="36" y="144" class="mono" fill="#8A93A0" font-size="14.5">a single source of truth: reproducible, continuously monitored, and audit-ready end to end</text>
+    </g>
+
+  </svg>
+
+</div>
+</div>
+<script>
+  (function() {
+    var canvas = document.getElementById('canvas');
+    function fit() {
+      var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+      canvas.style.transform = 'scale(' + s + ')';
+    }
+    window.addEventListener('resize', fit);
+    fit();
+  })();
+</script>
+</body>
+</html>

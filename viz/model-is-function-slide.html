@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Each System Creates Its Own Epicycles · Slide Asset</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg:           #0A0B0D;
+    --paper-warm:   #1C2027;
+    --ink:          #FFFFFF;
+    --text-body:    #D5D9E1;
+    --muted:        #8A93A0;
+    --rule:         #242932;
+    --rule-strong:  #3A4150;
+    --accent:       #EC4899;
+    --c-input:      #4DD0E1;
+    --c-output:     #F97316;
+    --c-op:         #FFFFFF;
+    --c-data:       #2DE2A0;
+    --c-version:    #EC4899;
+    --serif: "Playfair Display", "Times New Roman", Georgia, serif;
+    --sans:  "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
+    --mono:  "JetBrains Mono", "SF Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  /* 1740×895 canvas — same format as the epicycles slide */
+  .stage { position: fixed; inset: 0; background: var(--bg); overflow: hidden; }
+  .canvas {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 1740px; height: 895px;
+    margin-left: -870px; margin-top: -447.5px;
+    transform-origin: center center;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .canvas svg { display: block; width: 100%; height: 100%; }
+
+  /* Flow arrow animation — same timing as modeldefinition-intro-slide */
+  @keyframes flow-fast-anim { to { stroke-dashoffset: -30; } }
+  @keyframes flow-slow-anim { to { stroke-dashoffset: -24; } }
+  .flow-fast { stroke-dasharray: 6 4; animation: flow-fast-anim 1.6s linear infinite; }
+  .flow-slow { stroke-dasharray: 6 6;  animation: flow-slow-anim 4.5s linear infinite; }
+
+  /* Epicycle arcs rotate slowly to reinforce the "spinning in place" feeling */
+  @keyframes spin-cw  { from { transform: rotate(0deg);   } to { transform: rotate(360deg);  } }
+  @keyframes spin-ccw { from { transform: rotate(0deg);   } to { transform: rotate(-360deg); } }
+  .epi-1 { animation: spin-cw  22s linear infinite; }
+  .epi-2 { animation: spin-ccw 31s linear infinite; }
+  .epi-3 { animation: spin-cw  17s linear infinite; }
+</style>
+</head>
+<body>
+<div class="stage">
+<div class="canvas" id="canvas">
+
+  <!--
+    ViewBox: 0 0 1740 895   (matches the deck canvas 1:1)
+
+    Three columns, each 500 wide, spaced evenly.
+    Each column contains a mini version of the modeldefinition-intro diagram:
+      X box  · arrow · ƒ box · arrow · Y box
+      ENVIRONMENT bar above
+    Plus epicycle ellipses centred on ƒ that spin slowly.
+
+    Column centres: 290, 870, 1450
+    Each mini-diagram is in its own <g transform="translate(cx - 250, …)">
+    so internal coordinates stay consistent (no box-position drift).
+
+    Within each column the layout mirrors modeldefinition-intro-slide,
+    scaled to ~0.72× (so the 760-wide diagram fits in 540 px):
+      X rect    0  90  → 106  162   (106 × 72)
+      Operator 200  90  → 361  162   (161 × 72)
+      Y rect   420  90  → 526  162   (106 × 72)
+      Env bar  204  38  → 358   63   (154 × 25)
+      arrows: 108→198 @126, 363→418 @126
+  -->
+  <svg viewBox="0 0 1740 895" xmlns="http://www.w3.org/2000/svg"
+       preserveAspectRatio="xMidYMid meet"
+       role="img" aria-label="Three isolated systems — spreadsheet, statistical, and ML models — each with its own swirling governance epicycles, in the same X-to-f-to-Y style.">
+
+    <defs>
+      <!-- Arrow heads for mini-diagrams (reuse per column via unique IDs) -->
+      <marker id="aIn"  viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+        <path d="M0,0 L10,5 L0,10 Z" fill="#4DD0E1"/>
+      </marker>
+      <marker id="aOut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+        <path d="M0,0 L10,5 L0,10 Z" fill="#F97316"/>
+      </marker>
+      <marker id="aEnv" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+        <path d="M0,0 L10,5 L0,10 Z" fill="#2DE2A0"/>
+      </marker>
+
+      <pattern id="dg" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+        <path d="M40,0 L0,0 L0,40" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+      </pattern>
+    </defs>
+
+    <!-- background grid -->
+    <rect width="1740" height="895" fill="url(#dg)"/>
+
+    <!-- ─────────────────────────────────────────────────────────────── -->
+    <!-- SHARED MACRO: the mini function diagram                          -->
+    <!-- Reused three times via <use> — one per column.                  -->
+    <!-- We define it once in a <defs> symbol and stamp it.              -->
+    <!-- ─────────────────────────────────────────────────────────────── -->
+    <defs>
+      <symbol id="miniFunc" viewBox="0 0 526 220" overflow="visible">
+        <!-- drafting grid behind the symbol -->
+        <rect x="0" y="0" width="526" height="200" fill="url(#dg)"/>
+
+        <!-- ENVIRONMENT bar -->
+        <rect x="204" y="38" width="154" height="25"
+              fill="#2DE2A0" stroke="#2DE2A0" stroke-width="0.8"/>
+        <text x="281" y="50.5"
+              text-anchor="middle" dominant-baseline="central"
+              font-family="Source Sans 3, Helvetica, Arial, sans-serif"
+              font-size="11" font-weight="700" letter-spacing="0.06em"
+              fill="#0A0B0D">ENVIRONMENT</text>
+
+        <!-- Ω↓ arrow -->
+        <line x1="281" y1="63" x2="281" y2="90"
+              stroke="#2DE2A0" stroke-width="1.2"
+              marker-end="url(#aEnv)"
+              class="flow-slow"/>
+
+        <!-- X box -->
+        <rect x="0" y="90" width="106" height="72"
+              fill="#4DD0E1" stroke="#4DD0E1" stroke-width="0.9"/>
+        <text x="53" y="126"
+              text-anchor="middle" dominant-baseline="central"
+              font-family="Playfair Display, Georgia, serif"
+              font-size="46" font-weight="700"
+              fill="#0A0B0D">X</text>
+
+        <!-- x→ƒ arrow -->
+        <line x1="108" y1="126" x2="198" y2="126"
+              stroke="#4DD0E1" stroke-width="1.5"
+              marker-end="url(#aIn)"
+              class="flow-fast"/>
+
+        <!-- ƒ operator box -->
+        <rect x="-3" y="-3" width="167" height="78"
+              transform="translate(200 90)"
+              fill="rgba(255,255,255,0.04)"/>
+        <rect x="200" y="90" width="161" height="72"
+              fill="#1C2027" stroke="#FFFFFF" stroke-width="1.2"/>
+        <text x="281" y="126"
+              text-anchor="middle" dominant-baseline="central"
+              font-family="Playfair Display, Georgia, serif"
+              font-size="40" font-style="italic" font-weight="700"
+              fill="#FFFFFF">ƒ</text>
+
+        <!-- ƒ→y arrow -->
+        <line x1="363" y1="126" x2="418" y2="126"
+              stroke="#F97316" stroke-width="1.5"
+              marker-end="url(#aOut)"
+              class="flow-fast"/>
+
+        <!-- Y box -->
+        <rect x="420" y="90" width="106" height="72"
+              fill="#F97316" stroke="#F97316" stroke-width="0.9"/>
+        <text x="473" y="126"
+              text-anchor="middle" dominant-baseline="central"
+              font-family="Playfair Display, Georgia, serif"
+              font-size="46" font-weight="700"
+              fill="#0A0B0D">Y</text>
+      </symbol>
+    </defs>
+
+    <!-- ─────────────────────────────────────────────────────────────── -->
+    <!-- COLUMN 1 — Spreadsheet / vendor models                          -->
+    <!-- centre x = 290, column width = 526 → left edge = 290-263 = 27  -->
+    <!-- ─────────────────────────────────────────────────────────────── -->
+    <g transform="translate(27, 290)">
+      <!-- epicycle halos, centred on the ƒ box centre (281, 126) -->
+      <g transform="translate(281, 126)">
+        <g class="epi-1" style="transform-origin: 0px 0px;">
+          <ellipse cx="0" cy="0" rx="230" ry="96"
+                   fill="none" stroke="#EC4899" stroke-width="1.4" opacity="0.38"
+                   stroke-dasharray="4 8"/>
+        </g>
+        <g class="epi-2" style="transform-origin: 0px 0px;">
+          <ellipse cx="0" cy="0" rx="200" ry="68"
+                   fill="none" stroke="#EC4899" stroke-width="1" opacity="0.25"
+                   stroke-dasharray="3 10"/>
+        </g>
+        <g class="epi-3" style="transform-origin: 0px 0px;">
+          <ellipse cx="0" cy="0" rx="170" ry="130"
+                   fill="none" stroke="#EC4899" stroke-width="0.8" opacity="0.18"
+                   stroke-dasharray="2 12"/>
+        </g>
+      </g>
+      <!-- the function diagram -->
+      <use href="#miniFunc" x="0" y="0" width="526" height="220"/>
+      <!-- label -->
+      <text x="263" y="252"
+            text-anchor="middle"
+            font-family="Source Sans 3, Helvetica, Arial, sans-serif"
+            font-size="18" font-weight="700" letter-spacing="0.18em"
+            fill="#8A93A0">SPREADSHEET &amp; VENDOR</text>
+      <text x="263" y="274"
+            text-anchor="middle"
+            font-family="JetBrains Mono, monospace"
+            font-size="14" fill="#EC4899">its own governance</text>
+    </g>
+
+    <!-- ─────────────────────────────────────────────────────────────── -->
+    <!-- COLUMN 2 — Statistical / quant models                           -->
+    <!-- centre x = 870 → left edge = 870-263 = 607                     -->
+    <!-- ─────────────────────────────────────────────────────────────── -->
+    <g transform="translate(607, 290)">
+      <g transform="translate(281, 126)">
+        <g class="epi-2" style="transform-origin: 0px 0px;">
+          <ellipse cx="0" cy="0" rx="240" ry="80"
+                   fill="none" stroke="#EC4899" stroke-width="1.4" opacity="0.38"
+                   stroke-dasharray="5 7"/>
+        </g>
+        <g class="epi-3" style="transform-origin: 0px 0px;">
+          <ellipse cx="0" cy="0" rx="215" ry="115"
+                   fill="none" stroke="#EC4899" stroke-width="1" opacity="0.24"
+                   stroke-dasharray="3 9"/>
+        </g>
+        <g class="epi-1" style="transform-origin: 0px 0px;">
+          <ellipse cx="0" cy="0" rx="180" ry="60"
+                   fill="none" stroke="#EC4899" stroke-width="0.8" opacity="0.18"
+                   stroke-dasharray="2 11"/>
+        </g>
+      </g>
+      <use href="#miniFunc" x="0" y="0" width="526" height="220"/>
+      <text x="263" y="252"
+            text-anchor="middle"
+            font-family="Source Sans 3, Helvetica, Arial, sans-serif"
+            font-size="18" font-weight="700" letter-spacing="0.18em"
+            fill="#8A93A0">STATISTICAL &amp; QUANT</text>
+      <text x="263" y="274"
+            text-anchor="middle"
+            font-family="JetBrains Mono, monospace"
+            font-size="14" fill="#EC4899">its own governance</text>
+    </g>
+
+    <!-- ─────────────────────────────────────────────────────────────── -->
+    <!-- COLUMN 3 — ML / AI / Agentic models                             -->
+    <!-- centre x = 1450 → left edge = 1450-263 = 1187                  -->
+    <!-- ─────────────────────────────────────────────────────────────── -->
+    <g transform="translate(1187, 290)">
+      <g transform="translate(281, 126)">
+        <g class="epi-3" style="transform-origin: 0px 0px;">
+          <ellipse cx="0" cy="0" rx="250" ry="90"
+                   fill="none" stroke="#EC4899" stroke-width="1.4" opacity="0.38"
+                   stroke-dasharray="6 6"/>
+        </g>
+        <g class="epi-1" style="transform-origin: 0px 0px;">
+          <ellipse cx="0" cy="0" rx="195" ry="130"
+                   fill="none" stroke="#EC4899" stroke-width="1" opacity="0.24"
+                   stroke-dasharray="4 8"/>
+        </g>
+        <g class="epi-2" style="transform-origin: 0px 0px;">
+          <ellipse cx="0" cy="0" rx="165" ry="65"
+                   fill="none" stroke="#EC4899" stroke-width="0.8" opacity="0.18"
+                   stroke-dasharray="2 13"/>
+        </g>
+      </g>
+      <use href="#miniFunc" x="0" y="0" width="526" height="220"/>
+      <text x="263" y="252"
+            text-anchor="middle"
+            font-family="Source Sans 3, Helvetica, Arial, sans-serif"
+            font-size="18" font-weight="700" letter-spacing="0.18em"
+            fill="#8A93A0">ML &amp; AGENTIC AI</text>
+      <text x="263" y="274"
+            text-anchor="middle"
+            font-family="JetBrains Mono, monospace"
+            font-size="14" fill="#EC4899">its own governance</text>
+    </g>
+
+    <!-- ─────────────────────────────────────────────────────────────── -->
+    <!-- Vertical dividers between columns                               -->
+    <!-- ─────────────────────────────────────────────────────────────── -->
+    <line x1="580" y1="230" x2="580" y2="680"
+          stroke="#242932" stroke-width="1" stroke-dasharray="4 6"/>
+    <line x1="1160" y1="230" x2="1160" y2="680"
+          stroke="#242932" stroke-width="1" stroke-dasharray="4 6"/>
+
+    <!-- ─────────────────────────────────────────────────────────────── -->
+    <!-- Bottom caption                                                  -->
+    <!-- ─────────────────────────────────────────────────────────────── -->
+    <text x="870" y="768"
+          text-anchor="middle"
+          font-family="JetBrains Mono, monospace"
+          font-size="18" fill="#8A93A0">
+      each one is just a function · each one invented its own oversight · nobody knows which arcs still matter
+    </text>
+
+  </svg>
+
+</div>
+</div>
+
+<script>
+  (function() {
+    var canvas = document.getElementById('canvas');
+    function fit() {
+      var s = Math.min(window.innerWidth / 1740, window.innerHeight / 895);
+      canvas.style.transform = 'scale(' + s + ')';
+    }
+    window.addEventListener('resize', fit);
+    fit();
+  })();
+</script>
+</body>
+</html>

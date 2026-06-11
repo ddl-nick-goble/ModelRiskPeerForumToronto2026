@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Human-in-the-Loop — The Checks Between the Lines</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* ---------- Palette: Domino dark (matches GFMI / OMERS deck) ---------- */
+    --bg:           #0A0B0D;
+    --paper:        #14171C;
+    --paper-warm:   #1C2027;
+    --paper-sunken: #08090B;
+    --ink:          #FFFFFF;
+    --text-body:    #D5D9E1;
+    --muted:        #8A93A0;
+    --rule:         #242932;
+    --rule-strong:  #3A4150;
+
+    --accent:       #EC4899;
+
+    /* ---------- The four entities (matches the lines-of-defense slide) ---------- */
+    --c-models:  #EC4899;   /* pink   — the system / the model */
+    --c-line1:   #2DE2A0;   /* mint   — 1st line · the desk */
+    --c-line2:   #4DD0E1;   /* cyan   — 2nd line · risk & validation */
+    --c-line3:   #F4D03F;   /* yellow — 3rd line · internal audit */
+    --c-version: #EC4899;
+
+    --serif: "Playfair Display", "Times New Roman", Georgia, serif;
+    --sans:  "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
+    --mono:  "JetBrains Mono", "SF Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  .stage { position: fixed; inset: 0; background: var(--bg); overflow: hidden; }
+  .canvas {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 1920px; height: 1080px;
+    margin-left: -960px; margin-top: -540px;
+    transform-origin: center center;
+    background: var(--bg);
+    display: grid; place-items: center;
+  }
+  svg { width: 1740px; height: auto; display: block; }
+
+  .label-serif { font-family: var(--serif); fill: var(--ink); }
+  .label-mono  { font-family: var(--mono); }
+  .label-sans  { font-family: var(--sans); fill: var(--ink); }
+  .eyebrow {
+    font-family: var(--mono); font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase;
+  }
+  @keyframes flow-anim { to { stroke-dashoffset: -24; } }
+  .flow { stroke-dasharray: 5 5; animation: flow-anim 3.2s linear infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.45; } }
+  .pulse { animation: pulse 2.6s ease-in-out infinite; }
+</style>
+</head>
+<body>
+<div class="stage">
+<div class="canvas" id="canvas">
+
+  <svg viewBox="0 0 1740 880" xmlns="http://www.w3.org/2000/svg"
+       aria-label="Four entities — the model, the desk, risk and validation, internal audit — with the three human-in-the-loop checkpoints that govern each handoff between them">
+
+    <defs>
+      <!-- the box-to-box operator glyph reused in each entity card -->
+      <symbol id="flow" viewBox="0 0 64 24">
+        <rect x="0"  y="2" width="20" height="20" rx="3"/>
+        <rect x="44" y="2" width="20" height="20" rx="3"/>
+        <path d="M22 12 l18 0 m-9 -7 l9 7 -9 7"/>
+      </symbol>
+      <marker id="ar-mint" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="var(--c-line1)"/></marker>
+      <marker id="ar-cyan" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="var(--c-line2)"/></marker>
+      <marker id="ar-yel"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="var(--c-line3)"/></marker>
+      <pattern id="grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+        <path d="M40,0 L0,0 L0,40" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+      </pattern>
+    </defs>
+
+    <rect x="0" y="0" width="1740" height="880" fill="url(#grid)"/>
+
+    <!-- ================= chevrons between the four entities (escalation flow) ================= -->
+    <g fill="none" stroke="#8A93A0" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.7">
+      <path d="M392 118 l24 20 -24 20"/>
+      <path d="M872 118 l24 20 -24 20"/>
+      <path d="M1352 118 l24 20 -24 20"/>
+    </g>
+
+    <!-- ================= ENTITY 1 · THE SYSTEM / THE MODEL ================= -->
+    <g>
+      <rect x="0" y="38" width="300" height="200" rx="14" fill="#14171C" stroke="#242932"/>
+      <rect x="0" y="38" width="300" height="6" rx="3" fill="var(--c-models)"/>
+      <text x="150" y="86" text-anchor="middle" class="eyebrow" font-size="17" fill="var(--c-models)">THE SYSTEM</text>
+      <g fill="none" stroke="var(--c-models)" stroke-width="3"><use href="#flow" x="118" y="112" width="64" height="24"/></g>
+      <text x="150" y="196" text-anchor="middle" class="label-serif" font-size="36" font-weight="700">The model</text>
+    </g>
+
+    <!-- ================= ENTITY 2 · 1ST LINE / THE DESK ================= -->
+    <g>
+      <rect x="480" y="38" width="300" height="200" rx="14" fill="#14171C" stroke="#242932"/>
+      <rect x="480" y="38" width="300" height="6" rx="3" fill="var(--c-line1)"/>
+      <text x="630" y="86" text-anchor="middle" class="eyebrow" font-size="17" fill="var(--c-line1)">1ST LINE</text>
+      <g fill="none" stroke="var(--c-line1)" stroke-width="3"><use href="#flow" x="598" y="112" width="64" height="24"/></g>
+      <text x="630" y="196" text-anchor="middle" class="label-serif" font-size="36" font-weight="700">The desk</text>
+    </g>
+
+    <!-- ================= ENTITY 3 · 2ND LINE / RISK & VALIDATION ================= -->
+    <g>
+      <rect x="960" y="38" width="300" height="200" rx="14" fill="#14171C" stroke="#242932"/>
+      <rect x="960" y="38" width="300" height="6" rx="3" fill="var(--c-line2)"/>
+      <text x="1110" y="86" text-anchor="middle" class="eyebrow" font-size="17" fill="var(--c-line2)">2ND LINE</text>
+      <g fill="none" stroke="var(--c-line2)" stroke-width="3"><use href="#flow" x="1078" y="112" width="64" height="24"/></g>
+      <text x="1110" y="196" text-anchor="middle" class="label-serif" font-size="33" font-weight="700">Risk &amp; validation</text>
+    </g>
+
+    <!-- ================= ENTITY 4 · 3RD LINE / INTERNAL AUDIT ================= -->
+    <g>
+      <rect x="1440" y="38" width="300" height="200" rx="14" fill="#14171C" stroke="#242932"/>
+      <rect x="1440" y="38" width="300" height="6" rx="3" fill="var(--c-line3)"/>
+      <text x="1590" y="86" text-anchor="middle" class="eyebrow" font-size="17" fill="var(--c-line3)">3RD LINE</text>
+      <g fill="none" stroke="var(--c-line3)" stroke-width="3"><use href="#flow" x="1558" y="112" width="64" height="24"/></g>
+      <text x="1590" y="196" text-anchor="middle" class="label-serif" font-size="34" font-weight="700">Internal audit</text>
+    </g>
+
+    <!-- ================= connectors: each boundary drops to the gate that governs it ================= -->
+    <path d="M404 250 L404 372" fill="none" stroke="var(--c-line1)" stroke-width="1.6" class="flow" marker-end="url(#ar-mint)"/>
+    <path d="M884 250 L884 372" fill="none" stroke="var(--c-line2)" stroke-width="1.6" class="flow" marker-end="url(#ar-cyan)"/>
+    <path d="M1364 250 L1364 372" fill="none" stroke="var(--c-line3)" stroke-width="1.6" class="flow" marker-end="url(#ar-yel)"/>
+
+    <!-- ============================================================ -->
+    <!-- GATE A · model -> desk · the 1st line owns and watches it      -->
+    <!-- ============================================================ -->
+    <g>
+      <rect x="214" y="378" width="380" height="406" rx="12" fill="#0E1014" stroke="var(--c-line1)" stroke-opacity="0.45"/>
+      <rect x="214" y="378" width="380" height="5" rx="2.5" fill="var(--c-line1)"/>
+      <text x="234" y="416" class="eyebrow" font-size="13" fill="var(--c-line1)">GATE · THE DESK OWNS IT</text>
+      <text x="234" y="456" class="label-serif" font-size="27" font-weight="700">Use &amp; ongoing</text>
+      <text x="234" y="488" class="label-serif" font-size="27" font-weight="700">monitoring</text>
+      <text x="234" y="528" class="label-sans" font-size="17" font-style="italic" fill="var(--c-line1)">&#8220;Is today&#8217;s number usable &#8212;</text>
+      <text x="234" y="551" class="label-sans" font-size="17" font-style="italic" fill="var(--c-line1)">or do I override it?&#8221;</text>
+      <line x1="234" y1="572" x2="574" y2="572" stroke="var(--rule)" stroke-width="1"/>
+      <g class="label-mono" font-size="14.5" fill="var(--text-body)">
+        <text x="234" y="606">&#8226; developer testing &amp; self-assessment</text>
+        <text x="234" y="638">&#8226; outcome / back-test review</text>
+        <text x="234" y="670">&#8226; override log + P&amp;L attribution</text>
+      </g>
+      <rect x="234" y="708" width="340" height="48" rx="8" fill="var(--c-line1)" fill-opacity="0.10" stroke="var(--c-line1)" stroke-opacity="0.4"/>
+      <text x="404" y="730" text-anchor="middle" class="label-mono" font-size="11" fill="var(--c-line1)" letter-spacing="0.14em">HUMAN IN THE LOOP</text>
+      <text x="404" y="747" text-anchor="middle" class="label-mono" font-size="13" fill="var(--text-body)">the owner signs off to run</text>
+    </g>
+
+    <!-- ============================================================ -->
+    <!-- GATE B · desk -> risk/val · independent validation            -->
+    <!-- ============================================================ -->
+    <g>
+      <rect x="694" y="378" width="380" height="406" rx="12" fill="#0E1014" stroke="var(--c-line2)" stroke-opacity="0.45"/>
+      <rect x="694" y="378" width="380" height="5" rx="2.5" fill="var(--c-line2)"/>
+      <text x="714" y="416" class="eyebrow" font-size="13" fill="var(--c-line2)">GATE · INDEPENDENT 2ND LINE</text>
+      <text x="714" y="456" class="label-serif" font-size="27" font-weight="700">Validation &amp;</text>
+      <text x="714" y="488" class="label-serif" font-size="27" font-weight="700">effective challenge</text>
+      <text x="714" y="528" class="label-sans" font-size="17" font-style="italic" fill="var(--c-line2)">&#8220;Sound and fit for purpose?</text>
+      <text x="714" y="551" class="label-sans" font-size="17" font-style="italic" fill="var(--c-line2)">Approve, condition, or reject.&#8221;</text>
+      <line x1="714" y1="572" x2="1054" y2="572" stroke="var(--rule)" stroke-width="1"/>
+      <g class="label-mono" font-size="14.5" fill="var(--text-body)">
+        <text x="714" y="606">&#8226; challenge by who didn&#8217;t build it</text>
+        <text x="714" y="638">&#8226; benchmark &#183; replicate &#183; stress</text>
+        <text x="714" y="670">&#8226; limits &amp; conservative add-ons</text>
+      </g>
+      <rect x="714" y="708" width="340" height="48" rx="8" fill="var(--c-line2)" fill-opacity="0.10" stroke="var(--c-line2)" stroke-opacity="0.4"/>
+      <text x="884" y="730" text-anchor="middle" class="label-mono" font-size="11" fill="var(--c-line2)" letter-spacing="0.14em">HUMAN IN THE LOOP</text>
+      <text x="884" y="747" text-anchor="middle" class="label-mono" font-size="13" fill="var(--text-body)">model risk committee approves</text>
+    </g>
+
+    <!-- ============================================================ -->
+    <!-- GATE C · risk/val -> audit · assurance over the framework      -->
+    <!-- ============================================================ -->
+    <g>
+      <rect x="1174" y="378" width="380" height="406" rx="12" fill="#0E1014" stroke="var(--c-line3)" stroke-opacity="0.45"/>
+      <rect x="1174" y="378" width="380" height="5" rx="2.5" fill="var(--c-line3)"/>
+      <text x="1194" y="416" class="eyebrow" font-size="13" fill="var(--c-line3)">GATE · 3RD LINE ASSURANCE</text>
+      <text x="1194" y="456" class="label-serif" font-size="27" font-weight="700">Assurance over</text>
+      <text x="1194" y="488" class="label-serif" font-size="27" font-weight="700">the framework</text>
+      <text x="1194" y="528" class="label-sans" font-size="17" font-style="italic" fill="var(--c-line3)">&#8220;Is the 2nd line doing what</text>
+      <text x="1194" y="551" class="label-sans" font-size="17" font-style="italic" fill="var(--c-line3)">policy says &#8212; what&#8217;s slipping?&#8221;</text>
+      <line x1="1194" y1="572" x2="1534" y2="572" stroke="var(--rule)" stroke-width="1"/>
+      <g class="label-mono" font-size="14.5" fill="var(--text-body)">
+        <text x="1194" y="606">&#8226; audits the process, not the model</text>
+        <text x="1194" y="638">&#8226; inventory completeness &#183; sampling</text>
+        <text x="1194" y="670">&#8226; findings &#8594; remediation tracking</text>
+      </g>
+      <rect x="1194" y="708" width="340" height="48" rx="8" fill="var(--c-line3)" fill-opacity="0.10" stroke="var(--c-line3)" stroke-opacity="0.4"/>
+      <text x="1364" y="730" text-anchor="middle" class="label-mono" font-size="11" fill="var(--c-line3)" letter-spacing="0.14em">HUMAN IN THE LOOP</text>
+      <text x="1364" y="747" text-anchor="middle" class="label-mono" font-size="13" fill="var(--text-body)">attestation to the board</text>
+    </g>
+
+    <!-- ================= coda ================= -->
+    <text x="870" y="836" text-anchor="middle" class="label-sans" font-size="20" font-style="italic" fill="var(--accent)">Under OSFI E&#8209;23, every handoff is a control &#8212; and the judgment at each gate is the part you don&#8217;t automate.</text>
+
+  </svg>
+
+</div>
+</div>
+<script>
+  (function () {
+    var canvas = document.getElementById('canvas');
+    function fit() {
+      var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+      canvas.style.transform = 'scale(' + s + ')';
+    }
+    window.addEventListener('resize', fit);
+    fit();
+  })();
+</script>
+</body>
+</html>

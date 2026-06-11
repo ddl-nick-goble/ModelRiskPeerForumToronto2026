@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Trust the System — Checks Between the Lines</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg:           #0A0B0D;
+    --paper:        #14171C;
+    --ink:          #FFFFFF;
+    --text-body:    #D5D9E1;
+    --muted:        #8A93A0;
+    --rule:         #242932;
+
+    --accent:       #EC4899;
+
+    --c-models:  #EC4899;   /* pink   — the model / the system */
+    --c-line1:   #2DE2A0;   /* mint   — 1st line · the desk */
+    --c-line2:   #4DD0E1;   /* cyan   — 2nd line · risk & validation */
+    --c-line3:   #F4D03F;   /* yellow — 3rd line · internal audit */
+
+    --serif: "Playfair Display", "Times New Roman", Georgia, serif;
+    --sans:  "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
+    --mono:  "JetBrains Mono", "SF Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--ink);
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  .stage { position: fixed; inset: 0; background: var(--bg); overflow: hidden; }
+  .canvas {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 1920px; height: 1080px;
+    margin-left: -960px; margin-top: -540px;
+    transform-origin: center center;
+    background: var(--bg);
+    display: grid; place-items: center;
+  }
+  svg { width: 1740px; height: auto; display: block; }
+
+  .label-serif { font-family: var(--serif); fill: var(--ink); }
+  .label-mono  { font-family: var(--mono); }
+  .label-sans  { font-family: var(--sans); fill: var(--ink); }
+  .eyebrow {
+    font-family: var(--mono); font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+<div class="canvas" id="canvas">
+
+  <svg id="diagram" viewBox="0 0 1740 1040" xmlns="http://www.w3.org/2000/svg"
+       aria-label="Two rows of the same four entities — the model, the desk, risk and validation, internal audit. The top row wires every line to every other line. The bottom row keeps only the adjacent links, so each line watches the one below it.">
+
+    <defs>
+      <symbol id="flow" viewBox="0 0 64 24">
+        <rect x="0"  y="2" width="20" height="20" rx="3"/>
+        <rect x="44" y="2" width="20" height="20" rx="3"/>
+        <path d="M22 12 l18 0 m-9 -7 l9 7 -9 7"/>
+      </symbol>
+      <pattern id="grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+        <path d="M40,0 L0,0 L0,40" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+      </pattern>
+    </defs>
+
+    <rect x="0" y="0" width="1740" height="1040" fill="url(#grid)"/>
+
+    <g id="arcs"></g>
+    <g id="nodes"></g>
+
+    <text x="870" y="1018" text-anchor="middle" class="label-sans" font-size="22" font-style="italic" fill="var(--accent)">Same four entities. The checks live between the lines &#8212; and each line only needs to watch the one below it.</text>
+
+  </svg>
+
+</div>
+</div>
+<script>
+  (function () {
+    var NS = 'http://www.w3.org/2000/svg';
+    var cx = [340, 680, 1020, 1360];
+    var bw = 192, bh = 116;
+    var entities = [
+      { eyebrow: 'THE SYSTEM', name: 'The model',          color: 'var(--c-models)' },
+      { eyebrow: '1ST LINE',   name: 'The desk',           color: 'var(--c-line1)'  },
+      { eyebrow: '2ND LINE',   name: 'Risk & validation',  color: 'var(--c-line2)'  },
+      { eyebrow: '3RD LINE',   name: 'Internal audit',     color: 'var(--c-line3)'  }
+    ];
+
+    var rowTop = 318, rowBot = 726;
+
+    var ALL  = [[0,1],[1,2],[2,3],[0,2],[1,3],[0,3]];
+    var LEAN = [[0,1],[1,2],[2,3]];
+
+    function arcPath(c1, c2, cy, up) {
+      var x1 = Math.min(c1, c2), x2 = Math.max(c1, c2), dx = x2 - x1;
+      var h = dx * (0.30 - dx / 16000) * (up ? -1 : 1), cp = dx * 0.20;
+      return 'M ' + x1 + ' ' + cy + ' C ' + (x1 + cp) + ' ' + (cy + h) + ', ' + (x2 - cp) + ' ' + (cy + h) + ', ' + x2 + ' ' + cy;
+    }
+
+    function drawArcs(pairs, cy, stroke, opacity) {
+      var g = document.getElementById('arcs');
+      pairs.forEach(function (p) {
+        [true, false].forEach(function (up) {
+          var path = document.createElementNS(NS, 'path');
+          path.setAttribute('d', arcPath(cx[p[0]], cx[p[1]], cy, up));
+          path.setAttribute('fill', 'none');
+          path.setAttribute('stroke', stroke);
+          path.setAttribute('stroke-width', '1.6');
+          path.setAttribute('stroke-opacity', opacity);
+          g.appendChild(path);
+        });
+      });
+    }
+
+    function tspanText(x, y, str, cls, size, fill, weight, anchor) {
+      var t = document.createElementNS(NS, 'text');
+      t.setAttribute('x', x); t.setAttribute('y', y);
+      t.setAttribute('text-anchor', anchor || 'middle');
+      t.setAttribute('class', cls); t.setAttribute('font-size', size);
+      if (fill) t.setAttribute('fill', fill);
+      if (weight) t.setAttribute('font-weight', weight);
+      t.textContent = str;
+      return t;
+    }
+
+    function drawNodes(cy) {
+      var g = document.getElementById('nodes');
+      entities.forEach(function (e, i) {
+        var x = cx[i] - bw / 2, y = cy - bh / 2;
+        var box = document.createElementNS(NS, 'rect');
+        box.setAttribute('x', x); box.setAttribute('y', y);
+        box.setAttribute('width', bw); box.setAttribute('height', bh);
+        box.setAttribute('rx', '14');
+        box.setAttribute('fill', '#14171C');
+        box.setAttribute('stroke', e.color);
+        box.setAttribute('stroke-opacity', '0.85');
+        g.appendChild(box);
+
+        var bar = document.createElementNS(NS, 'rect');
+        bar.setAttribute('x', x); bar.setAttribute('y', y);
+        bar.setAttribute('width', bw); bar.setAttribute('height', 6);
+        bar.setAttribute('rx', '3'); bar.setAttribute('fill', e.color);
+        g.appendChild(bar);
+
+        g.appendChild(tspanText(cx[i], y + 40, e.eyebrow, 'eyebrow', 15, e.color));
+        g.appendChild(tspanText(cx[i], y + 92, e.name, 'label-serif', 28, null, '700'));
+      });
+    }
+
+    drawArcs(ALL,  rowTop, 'rgba(255,255,255,0.78)', '0.78');
+    drawArcs(LEAN, rowBot, '#2DE2A0', '0.95');
+    drawNodes(rowTop);
+    drawNodes(rowBot);
+
+    var arcsG = document.getElementById('arcs');
+    arcsG.appendChild(tspanText(870, rowTop - 200, 'EVERY LINE WIRED TO EVERY OTHER', 'eyebrow', 14, 'var(--muted)'));
+    arcsG.appendChild(tspanText(870, rowBot + 210, 'EACH LINE WATCHES THE ONE BELOW', 'eyebrow', 14, 'var(--c-line1)'));
+
+    var canvas = document.getElementById('canvas');
+    function fit() {
+      var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+      canvas.style.transform = 'scale(' + s + ')';
+    }
+    window.addEventListener('resize', fit);
+    fit();
+  })();
+</script>
+</body>
+</html>

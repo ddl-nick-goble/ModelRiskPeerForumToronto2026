@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The Four Lines — Highest Level</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg:       #0A0B0D;
+    --c-models: #EC4899;   /* pink   — the system / the model */
+    --c-line1:  #2DE2A0;   /* mint   — 1st line · the desk */
+    --c-line2:  #4DD0E1;   /* cyan   — 2nd line · risk & validation */
+    --c-line3:  #F4D03F;   /* yellow — 3rd line · internal audit */
+    --serif: "Playfair Display", "Times New Roman", Georgia, serif;
+    --mono:  "JetBrains Mono", "SF Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body { background: var(--bg); overflow: hidden; -webkit-font-smoothing: antialiased; }
+  .stage { position: fixed; inset: 0; background: var(--bg); overflow: hidden; }
+  .canvas {
+    position: absolute; top: 50%; left: 50%;
+    width: 1920px; height: 1080px;
+    margin-left: -960px; margin-top: -540px;
+    transform-origin: center center; background: var(--bg);
+    display: grid; place-items: center;
+  }
+  svg { width: 1740px; height: auto; display: block; }
+  .eyebrow { font-family: var(--mono); font-weight: 700; letter-spacing: 0.24em; }
+  .name    { font-family: var(--serif); font-weight: 900; }
+</style>
+</head>
+<body>
+<div class="stage">
+<div class="canvas" id="canvas">
+
+  <svg viewBox="0 0 1740 520" xmlns="http://www.w3.org/2000/svg"
+       aria-label="The four lines of defense as four solid blocks: the model, the desk, risk and validation, internal audit">
+
+    <!-- chevrons between the solid blocks -->
+    <g fill="none" stroke="#5A6472" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M398 232 l30 28 -30 28"/>
+      <path d="M878 232 l30 28 -30 28"/>
+      <path d="M1358 232 l30 28 -30 28"/>
+    </g>
+
+    <!-- 1 · THE MODEL -->
+    <g>
+      <rect x="0" y="120" width="300" height="280" rx="18" fill="var(--c-models)"/>
+      <text x="150" y="182" text-anchor="middle" class="eyebrow" font-size="20" fill="#0A0B0D" opacity="0.7">THE SYSTEM</text>
+      <text x="150" y="280" text-anchor="middle" class="name" font-size="52" fill="#0A0B0D">The</text>
+      <text x="150" y="336" text-anchor="middle" class="name" font-size="52" fill="#0A0B0D">model</text>
+    </g>
+
+    <!-- 2 · THE DESK -->
+    <g>
+      <rect x="480" y="120" width="300" height="280" rx="18" fill="var(--c-line1)"/>
+      <text x="630" y="182" text-anchor="middle" class="eyebrow" font-size="20" fill="#0A0B0D" opacity="0.7">1ST LINE</text>
+      <text x="630" y="280" text-anchor="middle" class="name" font-size="52" fill="#0A0B0D">The</text>
+      <text x="630" y="336" text-anchor="middle" class="name" font-size="52" fill="#0A0B0D">desk</text>
+    </g>
+
+    <!-- 3 · RISK & VALIDATION -->
+    <g>
+      <rect x="960" y="120" width="300" height="280" rx="18" fill="var(--c-line2)"/>
+      <text x="1110" y="182" text-anchor="middle" class="eyebrow" font-size="20" fill="#0A0B0D" opacity="0.7">2ND LINE</text>
+      <text x="1110" y="280" text-anchor="middle" class="name" font-size="48" fill="#0A0B0D">Risk &amp;</text>
+      <text x="1110" y="336" text-anchor="middle" class="name" font-size="48" fill="#0A0B0D">validation</text>
+    </g>
+
+    <!-- 4 · INTERNAL AUDIT -->
+    <g>
+      <rect x="1440" y="120" width="300" height="280" rx="18" fill="var(--c-line3)"/>
+      <text x="1590" y="182" text-anchor="middle" class="eyebrow" font-size="20" fill="#0A0B0D" opacity="0.7">3RD LINE</text>
+      <text x="1590" y="280" text-anchor="middle" class="name" font-size="48" fill="#0A0B0D">Internal</text>
+      <text x="1590" y="336" text-anchor="middle" class="name" font-size="48" fill="#0A0B0D">audit</text>
+    </g>
+
+  </svg>
+
+</div>
+</div>
+<script>
+  (function () {
+    var canvas = document.getElementById('canvas');
+    function fit() {
+      var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+      canvas.style.transform = 'scale(' + s + ')';
+    }
+    window.addEventListener('resize', fit);
+    fit();
+  })();
+</script>
+</body>
+</html>
